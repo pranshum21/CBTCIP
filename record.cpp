@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 struct Student {
     int rollNumber;
@@ -96,7 +97,7 @@ void updateStudent(std::vector<Student>& students) {
     std::cout << "Enter roll number of the student to update: ";
     std::cin >> rollNumber;
     std::cin.ignore();
-    
+
     bool found = false;
     for (auto& student : students) {
         if (student.rollNumber == rollNumber) {
@@ -112,7 +113,7 @@ void updateStudent(std::vector<Student>& students) {
             break;
         }
     }
-    
+
     if (!found) {
         std::cout << "Student with roll number " << rollNumber << " not found.\n";
     }
@@ -141,14 +142,16 @@ void loadStudents(std::vector<Student>& students, const std::string& filename) {
     if (inFile.is_open()) {
         Student student;
         while (inFile >> student.rollNumber) {
-            inFile.ignore();
+            inFile.ignore(); // Ignore newline after roll number
             std::getline(inFile, student.name);
             std::getline(inFile, student.course);
             inFile >> student.grade;
-            inFile.ignore();
+            inFile.ignore(); // Ignore newline after grade
             students.push_back(student);
         }
         inFile.close();
+    } else {
+        std::cout << "Could not open file " << filename << " for reading.\n";
     }
 }
 
@@ -162,5 +165,7 @@ void saveStudents(const std::vector<Student>& students, const std::string& filen
             outFile << student.grade << "\n";
         }
         outFile.close();
+    } else {
+        std::cout << "Could not open file " << filename << " for writing.\n";
     }
 }
